@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PlayfabApi\PlayfabApi.csproj" />
+      <ProjectReference Include="..\DLV_Api\DLV_Api.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,29 +1,29 @@
 ﻿using System.Net;
 using System.Reflection;
 using BepInEx;
-using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using Microsoft.VisualBasic.FileIO;
 using PlayFab;
-using PlayfabApi;
+using DLV_Api;
 using Serilog;
 
-namespace DLVPA;
+namespace DLV_PacketAnalyzerMod;
 
-[BepInPlugin("org.bepinex.plugins.DLVPA", "Dreamlight Valley Packet Analyzer", "1.0.0.0")]
-public class PlayfabPacketAnalyzer : BasePlugin
+[BepInPlugin("org.bepinex.plugins.DLV_PacketAnalyzerMod", "Dreamlight Valley Packet Analyzer", "1.0.0.0")]
+// ReSharper disable once UnusedType.Global
+public class DlvPacketAnalyzer : BasePlugin
 {
     private HttpServer? _httpServer;
 
     public override void Load()
     {
         var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
-                               Path.Join(SpecialDirectories.MyDocuments, "DLVPA");
+                               Path.Join(SpecialDirectories.MyDocuments, "DLV_PacketAnalyzerMod");
 
         Serilog.Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .WriteTo.Console()
-            .WriteTo.File(Path.Join(assemblyLocation, "DLVPA.log"))
+            .WriteTo.File(Path.Join(assemblyLocation, "DLV_PacketAnalyzerMod.log"))
             .CreateLogger();
 
         var titleId = PlayFabSettings.staticSettings.TitleId;
@@ -35,12 +35,11 @@ public class PlayfabPacketAnalyzer : BasePlugin
         var productionEnvironmentUrl = PlayFabSettings.ProductionEnvironmentUrl;
         if (string.IsNullOrEmpty(productionEnvironmentUrl))
         {
-            Serilog.Log.Logger.Error("Production environment URL is not set");
-            return;
+            productionEnvironmentUrl = "playfabapi.com";
         }
 
         var listenIp = IPAddress.Parse("127.0.0.1");
-        ushort listenPort = 8080;
+        const ushort listenPort = 8080;
         _httpServer = new HttpServer(
             listenIp,
             listenPort,

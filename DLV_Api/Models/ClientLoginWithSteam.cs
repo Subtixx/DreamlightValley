@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace PlayfabApi.Models;
+namespace DLV_Api.Models;
 
 public class ClientLoginWithSteamPayload
 {

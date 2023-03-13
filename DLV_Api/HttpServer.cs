@@ -1,34 +1,12 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using PlayfabApi.Models;
 using Serilog;
 
-namespace PlayfabApi
+namespace DLV_Api
 {
     public class HttpServer
     {
-        private class HttpResponse
-        {
-            public string Body { get; }
-
-            public string ContentType { get; }
-
-            public ushort StatusCode { get; }
-
-            public HttpResponse(HttpStatusCode statusCode, HttpHeaders responseHeaders, string responseContent)
-            {
-                StatusCode = (ushort)statusCode;
-                Body = responseContent;
-
-                responseHeaders.TryGetValues("Content-Type", out var contentType);
-                ContentType = contentType != null ? contentType.First() : "text/plain";
-            }
-        }
-
         private readonly HttpListener? _listener;
 
         private readonly string _originalUrl;
@@ -159,7 +137,7 @@ namespace PlayfabApi
             }
 
             var endpoint = request.Url.AbsolutePath;
-            var method = EndpointAttribute.GetHTTPMethod(request.HttpMethod);
+            var method = EndpointAttribute.GetHttpMethod(request.HttpMethod);
 
             var endpointMethod = _endpointMethods.FirstOrDefault(x =>
                 x.Method.GetCustomAttributes(typeof(EndpointAttribute), false).FirstOrDefault() is EndpointAttribute
@@ -280,7 +258,6 @@ namespace PlayfabApi
 
             if (!string.IsNullOrEmpty(_packetDir))
             {
-                Log.Debug(req.Headers["Content-Encoding"]);
                 await DumpPacket(req, response, requestBody, responseContent);
             }
 
@@ -300,14 +277,14 @@ namespace PlayfabApi
             string responseContent)
         {
             Log.Debug("{Method} Request to {Url}", req.HttpMethod, req.Url?.AbsolutePath);
-            Log.Debug("Request Headers: {Headers}", req.Headers);
-            Log.Debug(requestBody);
+            Log.Debug("Request Headers: {@Headers}", req.Headers);
+            Log.Debug("{RequestBody}", requestBody);
 
             Log.Debug("--------------------");
 
             Log.Debug("{StatusCode} Response from {Url}", resp.StatusCode, req.Url?.AbsolutePath);
             Log.Debug("Response Headers: {Headers}", resp.Headers);
-            Log.Debug(responseContent);
+            Log.Debug("{ResponseContent}", responseContent);
 
             var fileExtension = req.Headers["Content-Type"] switch
             {
@@ -315,44 +292,20 @@ namespace PlayfabApi
                 "application/xml" => "xml",
                 _ => "txt"
             };
-
-            // Write packets to file using url
-            await using (var file = new StreamWriter(
-                             _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "." + fileExtension, false))
+            
+            var requestPath = _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "." + fileExtension;
+            if(!File.Exists(requestPath))
             {
+                await using var file = new StreamWriter(requestPath, false);
                 await file.WriteLineAsync(requestBody);
             }
 
-            await using (var file = new StreamWriter(
-                             _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "_resp." + fileExtension, false))
+            var responsePath = _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "_resp." + fileExtension;
+            if (!File.Exists(responsePath))
             {
+                await using var file = new StreamWriter(responsePath, false);
                 await file.WriteLineAsync(responseContent);
             }
-        }
-
-        [Endpoint(HTTPMethod.POST, "/Client/LoginWithSteam")]
-        public static string ClientLoginWithSteam(HttpListenerRequest request, string requestBody, string responseBody)
-        {
-            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
-
-            // JObject to ClientLoginWithSteam
-            var clientLoginWithSteam = apiResponse.Data.ToObject<ClientLoginWithSteam>();
-
-            clientLoginWithSteam.InfoResultPayload.UserData.Clear();
-            clientLoginWithSteam.InfoResultPayload.UserData.Add(
-                "awarded_founders_pack", new ClientLoginWithSteamPayload.UserDataClass()
-                {
-                    LastUpdated = new DateTime(),
-                    Permission = "private",
-                    Value =
-                        "{\"DataVersion\":3,\"AwarwedPacksPerStore\":{\"Steam\":{\"PackPrettyName\":\"FoundersPackUltimate_Steam_OnlineKey\",\"PackInstanceId\":\"" +
-                        Guid.NewGuid() + "\"}}}"
-                }
-            );
-
-            apiResponse.Data = JObject.FromObject(clientLoginWithSteam);
-
-            return JsonConvert.SerializeObject(apiResponse);
         }
     }
 }
