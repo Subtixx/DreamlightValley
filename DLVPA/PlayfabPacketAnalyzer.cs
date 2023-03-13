@@ -40,18 +40,22 @@ public class PlayfabPacketAnalyzer : BasePlugin
             return;
         }
 
+        var listenIp = IPAddress.Parse("127.0.0.1");
+        ushort listenPort = 8080;
         _httpServer = new HttpServer(
-            IPAddress.Parse("127.0.0.1"),
-            8080,
+            listenIp,
+            listenPort,
             titleId,
             productionEnvironmentUrl,
             Path.Join(assemblyLocation, "packets")
         );
+        
+        // We don't want to block the main thread..
 #pragma warning disable CS4014
         _httpServer.Start();
 #pragma warning restore CS4014
 
-        PlayFabSettings.ProductionEnvironmentUrl = "http://127.0.0.1:8080";
+        PlayFabSettings.ProductionEnvironmentUrl = $"http://{listenIp}:{listenPort}";
     }
 
     public override bool Unload()

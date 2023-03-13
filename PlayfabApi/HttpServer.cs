@@ -1,17 +1,27 @@
 using System.Net;
 using System.Text;
 using Serilog;
+using System;
 
 namespace PlayfabApi
 {
     public class HttpServer
     {
-        private static HttpListener listener;
+        private readonly HttpListener? _listener;
 
-        private static string OriginalUrl = "playfabapi.com";
-        public static string TitleId = "C0D0";
-        public static string PacketDir = "packets";
+        private readonly string _originalUrl;
+        private readonly string _titleId;
+        private readonly string _packetDir;
 
+        /// <summary>
+        /// Create a new HTTP server
+        /// </summary>
+        /// <param name="listenIp">IP address to listen on</param>
+        /// <param name="listenPort">Port to listen on</param>
+        /// <param name="titleId">The title ID of the playfab SDK game</param>
+        /// <param name="productionEnvironmentUrl">The original production environment URL to send requests to</param>
+        /// <param name="packetDir">A directory to save packets to</param>
+        /// <exception cref="ArgumentException"></exception>
         public HttpServer(
             IPAddress listenIp,
             ushort listenPort,
@@ -28,139 +38,136 @@ namespace PlayfabApi
                 throw new ArgumentException("Listen IP cannot be a wildcard address");
             }
 
-            TitleId = titleId;
-            PacketDir = packetDir;
-            OriginalUrl = productionEnvironmentUrl;
-            
+            // Ignore certificate errors
+            ServicePointManager.ServerCertificateValidationCallback = delegate
+            {
+                return true;
+            };
+
+            _titleId = titleId;
+            _packetDir = packetDir;
+            _originalUrl = productionEnvironmentUrl;
+
             var listenIpString = listenIp.ToString();
 
-            listener = new HttpListener();
+            _listener = new HttpListener();
             var listenPrefix = $"http://{listenIpString}:{listenPort}/";
-            listener.Prefixes.Add(listenPrefix);
+            _listener.Prefixes.Add(listenPrefix);
             Log.Information("HTTP Server will listen on {Prefix}", listenPrefix);
 
-            if (!Directory.Exists(PacketDir))
+            if (!Directory.Exists(_packetDir))
             {
-                Directory.CreateDirectory(PacketDir);
+                Directory.CreateDirectory(_packetDir);
             }
         }
 
+        /// <summary>
+        /// Starts the http server
+        /// </summary>
         public async Task Start()
         {
-            listener.Start();
-            
+            _listener?.Start();
+
             Log.Information("HTTP Server started");
 
             // Handle requests
             await HandleIncomingConnections();
         }
 
+        /// <summary>
+        /// Stops the http server
+        /// </summary>
         public void Stop()
         {
-            listener.Stop();
+            _listener?.Stop();
         }
 
-        private async static Task HandleIncomingConnections()
+        /// <summary>
+        /// Main loop that handles incoming connections from http clients
+        /// </summary>
+        private async Task HandleIncomingConnections()
         {
-            var runServer = true;
-
-            // While a user hasn't visited the `shutdown` url, keep on handling requests
-            while (runServer)
+            while (_listener?.IsListening ?? false)
             {
                 // Will wait here until we hear from a connection
-                var ctx = await listener.GetContextAsync();
-
+                var ctx = await _listener.GetContextAsync();
                 // Peel out the requests and response objects
                 var req = ctx.Request;
                 var resp = ctx.Response;
 
-                var requestBody = new StreamReader(req.InputStream).ReadToEnd();
+                var requestBody = await new StreamReader(req.InputStream).ReadToEndAsync();
+                
+                var responseFromServer = await RelayPacket(req, requestBody);
+                await resp.OutputStream.WriteAsync(Encoding.UTF8.GetBytes(responseFromServer));
+                resp.Close();
+            }
+        }
 
-                Log.Logger.Debug("Request: {Method} {Url}", req.HttpMethod, req.RawUrl);
-                foreach (var header in req.Headers.AllKeys)
+        /// <summary>
+        /// Relays the packet to the original server and returns the response
+        /// </summary>
+        /// <param name="req">Original request</param>
+        /// <param name="requestBody">Original request body</param>
+        /// <returns>Response from the original server</returns>
+        private async Task<string> RelayPacket(HttpListenerRequest req, string requestBody)
+        {
+            using var client = new HttpClient();
+
+            foreach (var header in req.Headers.AllKeys)
+            {
+                if (header is null or "Host" or "Content-Length" or "Content-Type")
                 {
-                    if (header == null)
-                    {
-                        continue;
-                    }
-
-                    Log.Logger.Debug("Request: {Header} {Value}", header, req.Headers[header]);
+                    continue;
                 }
 
-                Log.Logger.Debug("Request: {Body}", requestBody);
+                client.DefaultRequestHeaders.Add(header, req.Headers[header]);
+            }
 
-                Log.Logger.Debug("Request to: {Url}", OriginalUrl + req.RawUrl);
+            var uri = new Uri("https://" + _titleId + "." + _originalUrl + req.RawUrl);
+            // Check url starts with Client/
+            if (req.Url?.AbsolutePath.StartsWith("/Client/") ?? true)
+            {
+                uri = new Uri("https://www." + _originalUrl + req.RawUrl);
+            }
 
-                ServicePointManager.ServerCertificateValidationCallback = delegate
-                {
-                    return true;
-                };
+            client.DefaultRequestHeaders.Add("Host", uri.Host);
 
-                // Make a request to the original URL
-                using (var client = new HttpClient())
-                {
-                    foreach (var header in req.Headers.AllKeys)
-                    {
-                        if (header == null || header == "Host" || header == "Content-Length" || header == "Content-Type")
-                        {
-                            continue;
-                        }
+            var request = new HttpRequestMessage(new HttpMethod(req.HttpMethod), uri);
+            request.Content = new StringContent(requestBody, Encoding.UTF8, req.Headers["Content-Type"]);
 
-                        client.DefaultRequestHeaders.Add(header, req.Headers[header]);
-                    }
+            var response = await client.SendAsync(request);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-                    var uri = new Uri("https://" + TitleId + "." + OriginalUrl + req.RawUrl);
-                    // Check url starts with Client/
-                    if (req.Url?.AbsolutePath.StartsWith("/Client/") ?? true)
-                    {
-                        uri = new Uri("https://www." + OriginalUrl + req.RawUrl);
-                    }
+            await DumpPacket(req, requestBody, responseContent);
 
-                    client.DefaultRequestHeaders.Add("Host", uri.Host);
+            return responseContent;
+        }
 
-                    var request = new HttpRequestMessage(new HttpMethod(req.HttpMethod), uri);
-                    request.Content = new StringContent(requestBody, Encoding.UTF8, req.Headers["Content-Type"]);
+        /// <summary>
+        /// Dumps the req packet and response to file
+        /// </summary>
+        /// <param name="req">Original request</param>
+        /// <param name="requestBody">Original request body</param>
+        /// <param name="responseContent">Response from the original server</param>
+        private async Task DumpPacket(HttpListenerRequest req, string requestBody, string responseContent)
+        {
+            var fileExtension = req.Headers["Content-Type"] switch
+            {
+                "application/json" => "json",
+                "application/xml" => "xml",
+                _ => "txt"
+            };
+            // Write packets to file using url
+            await using (var file = new StreamWriter(
+                             _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "." + fileExtension, false))
+            {
+                await file.WriteLineAsync(requestBody);
+            }
 
-                    var response = await client.SendAsync(request);
-                    var responseContent = await response.Content.ReadAsStringAsync();
-
-                    Log.Logger.Debug("Response: {StatusCode}", response.StatusCode);
-
-                    foreach (var header in response.Headers)
-                    {
-                        Log.Logger.Debug("Response: {Header} {Value}", header.Key, header.Value);
-                    }
-
-                    Log.Logger.Debug("Response: {Body}", responseContent);
-
-                    resp.StatusCode = (int)response.StatusCode;
-                    foreach (var header in response.Headers)
-                    {
-                        foreach (var value in header.Value)
-                        {
-                            resp.Headers.Add(header.Key, value);
-                        }
-                    }
-
-                    var buffer = Encoding.UTF8.GetBytes(responseContent);
-                    resp.ContentLength64 = buffer.Length;
-
-
-                    // Write packets to file using url
-                    await using (var file = new StreamWriter(
-                                     PacketDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + ".txt", false))
-                    {
-                        await file.WriteLineAsync(requestBody);
-                    }
-
-                    await using (var file = new StreamWriter(
-                                     PacketDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "_resp.txt", false))
-                    {
-                        await file.WriteLineAsync(responseContent);
-                    }
-
-                    await resp.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-                }
+            await using (var file = new StreamWriter(
+                             _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "_resp." + fileExtension, false))
+            {
+                await file.WriteLineAsync(responseContent);
             }
         }
     }
