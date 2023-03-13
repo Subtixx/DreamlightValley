@@ -17,6 +17,8 @@
   <p align="center">
     This is a mod for the game DreamLight Valley. Currently in development.
     <br />
+    This mod requires <a href="https://docs.bepinex.dev/master/articles/user_guide/installation/index.html">BepInEx</a>
+    <br />
     <br />
     <a href="https://github.com/Subtixx/DreamlightValley/issues">Report Bug</a>
     ·
