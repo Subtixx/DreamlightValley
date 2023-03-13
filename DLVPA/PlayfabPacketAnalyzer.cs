@@ -21,7 +21,7 @@ public class PlayfabPacketAnalyzer : BasePlugin
                                Path.Join(SpecialDirectories.MyDocuments, "DLVPA");
 
         Serilog.Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .MinimumLevel.Verbose()
             .WriteTo.Console()
             .WriteTo.File(Path.Join(assemblyLocation, "DLVPA.log"))
             .CreateLogger();
@@ -29,8 +29,7 @@ public class PlayfabPacketAnalyzer : BasePlugin
         var titleId = PlayFabSettings.staticSettings.TitleId;
         if (string.IsNullOrEmpty(titleId))
         {
-            Serilog.Log.Logger.Error("Title ID is not set");
-            return;
+            titleId = "997EB"; // Title ID for Dreamlight Valley
         }
         
         var productionEnvironmentUrl = PlayFabSettings.ProductionEnvironmentUrl;

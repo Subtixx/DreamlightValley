@@ -1,17 +1,43 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PlayfabApi.Models;
 using Serilog;
-using System;
 
 namespace PlayfabApi
 {
     public class HttpServer
     {
+        private class HttpResponse
+        {
+            public string Body { get; }
+
+            public string ContentType { get; }
+
+            public ushort StatusCode { get; }
+
+            public HttpResponse(HttpStatusCode statusCode, HttpHeaders responseHeaders, string responseContent)
+            {
+                StatusCode = (ushort)statusCode;
+                Body = responseContent;
+
+                responseHeaders.TryGetValues("Content-Type", out var contentType);
+                ContentType = contentType != null ? contentType.First() : "text/plain";
+            }
+        }
+
         private readonly HttpListener? _listener;
 
         private readonly string _originalUrl;
         private readonly string _titleId;
         private readonly string _packetDir;
+
+        public delegate string EndpointMethod(HttpListenerRequest request, string requestBody, string responseBody);
+
+        private readonly List<EndpointMethod> _endpointMethods;
 
         /// <summary>
         /// Create a new HTTP server
@@ -38,6 +64,21 @@ namespace PlayfabApi
                 throw new ArgumentException("Listen IP cannot be a wildcard address");
             }
 
+            if (listenPort == 0)
+            {
+                throw new ArgumentException("Listen port cannot be 0");
+            }
+
+            if (string.IsNullOrEmpty(titleId))
+            {
+                throw new ArgumentException("Title ID cannot be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(productionEnvironmentUrl))
+            {
+                throw new ArgumentException("Production environment URL cannot be null or empty");
+            }
+
             // Ignore certificate errors
             ServicePointManager.ServerCertificateValidationCallback = delegate
             {
@@ -59,6 +100,77 @@ namespace PlayfabApi
             {
                 Directory.CreateDirectory(_packetDir);
             }
+            
+            var methods = Assembly.GetExecutingAssembly().GetTypes()
+                .SelectMany(x => x.GetMethods())
+                .Where(x => x.GetCustomAttributes(typeof(EndpointAttribute), false).FirstOrDefault() != null);
+
+
+            _endpointMethods = new List<EndpointMethod>();
+            foreach (var method in methods)
+            {
+                var parameters = method.GetParameters();
+                if (parameters.Length != 3)
+                {
+                    Log.Error("Endpoint method {Method} has an invalid number of parameters", method.Name);
+                    continue;
+                }
+
+                if (parameters[0].ParameterType != typeof(HttpListenerRequest))
+                {
+                    Log.Error("Endpoint method {Method} has an invalid parameter type for parameter 0", method.Name);
+                    continue;
+                }
+
+                if (parameters[1].ParameterType != typeof(string))
+                {
+                    Log.Error("Endpoint method {Method} has an invalid parameter type for parameter 1", method.Name);
+                    continue;
+                }
+
+                if (parameters[2].ParameterType != typeof(string))
+                {
+                    Log.Error("Endpoint method {Method} has an invalid parameter type for parameter 2", method.Name);
+                    continue;
+                }
+
+                if (method.ReturnType != typeof(string))
+                {
+                    Log.Error("Endpoint method {Method} has an invalid return type", method.Name);
+                    continue;
+                }
+
+                _endpointMethods.Add((EndpointMethod)Delegate.CreateDelegate(typeof(EndpointMethod), method));
+            }
+
+            Log.Information("Loaded {Count} endpoint methods", _endpointMethods.Count);
+        }
+
+        public EndpointMethod? GetEndpointMethod(HttpListenerRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            if (request.Url == null)
+            {
+                throw new ArgumentNullException(nameof(request.Url));
+            }
+
+            var endpoint = request.Url.AbsolutePath;
+            var method = EndpointAttribute.GetHTTPMethod(request.HttpMethod);
+
+            var endpointMethod = _endpointMethods.FirstOrDefault(x =>
+                x.Method.GetCustomAttributes(typeof(EndpointAttribute), false).FirstOrDefault() is EndpointAttribute
+                    attribute && attribute.Path == endpoint && attribute.Method == method);
+            if (endpointMethod != null)
+            {
+                return endpointMethod;
+            }
+
+            Log.Error("No endpoint method found for {Endpoint} {Method}", endpoint, method);
+            return null;
         }
 
         /// <summary>
@@ -94,12 +206,40 @@ namespace PlayfabApi
                 // Peel out the requests and response objects
                 var req = ctx.Request;
                 var resp = ctx.Response;
+                try
+                {
+                    var requestBody = await new StreamReader(req.InputStream).ReadToEndAsync();
 
-                var requestBody = await new StreamReader(req.InputStream).ReadToEndAsync();
-                
-                var responseFromServer = await RelayPacket(req, requestBody);
-                await resp.OutputStream.WriteAsync(Encoding.UTF8.GetBytes(responseFromServer));
-                resp.Close();
+                    var responseFromServer = await RelayPacket(req, requestBody);
+
+                    Log.Information("Received request from {Client} to {Url}", req.RemoteEndPoint, req.Url);
+
+                    var origServerResponse = responseFromServer.Body;
+
+                    var endPointMethod = GetEndpointMethod(req);
+                    var response = endPointMethod?.Invoke(req, requestBody, origServerResponse);
+                    if (response != null)
+                    {
+                        origServerResponse = response;
+                    }
+
+                    resp.StatusCode = responseFromServer.StatusCode;
+                    resp.ContentType = responseFromServer.ContentType;
+
+                    var buffer = Encoding.UTF8.GetBytes(origServerResponse);
+                    resp.ContentLength64 = buffer.Length;
+                    await resp.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+
+                    Log.Information("Sent response to {Client}", req.RemoteEndPoint);
+                }
+                catch (Exception e)
+                {
+                    Log.Fatal(e, "Error while handling incoming connections");
+                }
+                finally
+                {
+                    resp.Close();
+                }
             }
         }
 
@@ -109,13 +249,13 @@ namespace PlayfabApi
         /// <param name="req">Original request</param>
         /// <param name="requestBody">Original request body</param>
         /// <returns>Response from the original server</returns>
-        private async Task<string> RelayPacket(HttpListenerRequest req, string requestBody)
+        private async Task<HttpResponse> RelayPacket(HttpListenerRequest req, string requestBody)
         {
             using var client = new HttpClient();
 
             foreach (var header in req.Headers.AllKeys)
             {
-                if (header is null or "Host" or "Content-Length" or "Content-Type")
+                if (header is null or "Host" or "Content-Length" or "Content-Type" or "Transfer-Encoding")
                 {
                     continue;
                 }
@@ -138,25 +278,44 @@ namespace PlayfabApi
             var response = await client.SendAsync(request);
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            await DumpPacket(req, requestBody, responseContent);
+            if (!string.IsNullOrEmpty(_packetDir))
+            {
+                Log.Debug(req.Headers["Content-Encoding"]);
+                await DumpPacket(req, response, requestBody, responseContent);
+            }
 
-            return responseContent;
+            Log.Debug("Returning response from {Url}", uri.AbsolutePath);
+
+            return new HttpResponse(response.StatusCode, response.Headers, responseContent);
         }
 
         /// <summary>
         /// Dumps the req packet and response to file
         /// </summary>
         /// <param name="req">Original request</param>
+        /// <param name="resp">Response from the original server</param>
         /// <param name="requestBody">Original request body</param>
         /// <param name="responseContent">Response from the original server</param>
-        private async Task DumpPacket(HttpListenerRequest req, string requestBody, string responseContent)
+        private async Task DumpPacket(HttpListenerRequest req, HttpResponseMessage resp, string requestBody,
+            string responseContent)
         {
+            Log.Debug("{Method} Request to {Url}", req.HttpMethod, req.Url?.AbsolutePath);
+            Log.Debug("Request Headers: {Headers}", req.Headers);
+            Log.Debug(requestBody);
+
+            Log.Debug("--------------------");
+
+            Log.Debug("{StatusCode} Response from {Url}", resp.StatusCode, req.Url?.AbsolutePath);
+            Log.Debug("Response Headers: {Headers}", resp.Headers);
+            Log.Debug(responseContent);
+
             var fileExtension = req.Headers["Content-Type"] switch
             {
                 "application/json" => "json",
                 "application/xml" => "xml",
                 _ => "txt"
             };
+
             // Write packets to file using url
             await using (var file = new StreamWriter(
                              _packetDir + "/" + req.Url?.AbsolutePath.Replace("/", "_") + "." + fileExtension, false))
@@ -169,6 +328,31 @@ namespace PlayfabApi
             {
                 await file.WriteLineAsync(responseContent);
             }
+        }
+
+        [Endpoint(HTTPMethod.POST, "/Client/LoginWithSteam")]
+        public static string ClientLoginWithSteam(HttpListenerRequest request, string requestBody, string responseBody)
+        {
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+
+            // JObject to ClientLoginWithSteam
+            var clientLoginWithSteam = apiResponse.Data.ToObject<ClientLoginWithSteam>();
+
+            clientLoginWithSteam.InfoResultPayload.UserData.Clear();
+            clientLoginWithSteam.InfoResultPayload.UserData.Add(
+                "awarded_founders_pack", new ClientLoginWithSteamPayload.UserDataClass()
+                {
+                    LastUpdated = new DateTime(),
+                    Permission = "private",
+                    Value =
+                        "{\"DataVersion\":3,\"AwarwedPacksPerStore\":{\"Steam\":{\"PackPrettyName\":\"FoundersPackUltimate_Steam_OnlineKey\",\"PackInstanceId\":\"" +
+                        Guid.NewGuid() + "\"}}}"
+                }
+            );
+
+            apiResponse.Data = JObject.FromObject(clientLoginWithSteam);
+
+            return JsonConvert.SerializeObject(apiResponse);
         }
     }
 }
