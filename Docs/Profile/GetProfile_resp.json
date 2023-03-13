@@ -1,0 +1,36 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "Profile": {
+      "Entity": {
+        "Id": "********************",
+        "Type": "title_player_account",
+        "TypeString": "title_player_account"
+      },
+      "EntityChain": "title_player_account!********************",
+      "VersionNumber": 77,
+      "Files": {
+        "profile": {
+          "FileName": "profile",
+          "Size": 999999999999,
+          "Checksum": "\"0xABCDEF123456789\"",
+          "LastModified": "2023-01-01T00:00:00Z"
+        },
+        "mini_profile": {
+          "FileName": "mini_profile",
+          "Size": 999999999,
+          "Checksum": "\"0x123456789ABCDEF\"",
+          "LastModified": "2023-01-01T00:00:00Z"
+        }
+      },
+      "Lineage": {
+        "NamespaceId": "********************",
+        "TitleId": "997EB",
+        "MasterPlayerAccountId": "********************",
+        "TitlePlayerAccountId": "********************"
+      },
+      "Created": "2023-01-01T00:00:00Z"
+    }
+  }
+}

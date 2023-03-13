@@ -1,0 +1,13 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "ProfileVersion": 77,
+    "Objects": {},
+    "Entity": {
+      "Id": "********************",
+      "Type": "title_player_account",
+      "TypeString": "title_player_account"
+    }
+  }
+}

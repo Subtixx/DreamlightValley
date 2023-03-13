@@ -1,0 +1,23 @@
+{
+  "CollectionId": null,
+  "CountryCode": null,
+  "CurrencyCode": null,
+  "CustomTags": null,
+  "Entity": null,
+  "IdempotencyId": null,
+  "MarketplaceConfigInstance": null,
+  "MarketplaceData": {
+    "SteamId": "*********************"
+  },
+  "OfferDetails": null,
+  "OnlyRedeemOfferDetailsList": false,
+  "TargetMarketplace": "Steam",
+  "AuthenticationContext": {
+    "ClientSessionTicket": "*****************************",
+    "PlayFabId": "****************",
+    // Base 64 encoded string (Docs/EntityToken.md)
+    "EntityToken": "",
+    "EntityId": "**********************",
+    "EntityType": "title_player_account"
+  }
+}

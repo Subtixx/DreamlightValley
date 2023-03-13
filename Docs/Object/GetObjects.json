@@ -1,0 +1,15 @@
+{
+  "CustomTags": null,
+  "Entity": {
+    "Id": "********************",
+    "Type": "title_player_account"
+  },
+  "EscapeObject": true,
+  "AuthenticationContext": {
+    "ClientSessionTicket": "********************",
+    "PlayFabId": "********************",
+    "EntityToken": "********************",
+    "EntityId": "********************",
+    "EntityType": "title_player_account"
+  }
+}

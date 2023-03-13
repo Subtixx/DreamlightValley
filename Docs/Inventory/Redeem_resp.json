@@ -1,0 +1,8 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "Succeeded": [],
+    "Failed": []
+  }
+}

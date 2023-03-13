@@ -1,0 +1,28 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "ProfileVersion": 77,
+    "Metadata": {
+      "profile": {
+        "FileName": "profile",
+        "DownloadUrl": "https://pfentfilesmain.blob.core.windows.net/entity-files/title_player_account!",
+        "Size": 9999999,
+        "Checksum": "\"0xABCDEF0123456789\"",
+        "LastModified": "2023-01-01T00:00:00Z"
+      },
+      "mini_profile": {
+        "FileName": "mini_profile",
+        "DownloadUrl": "https://pfentfilesmain.blob.core.windows.net/entity-files/title_player_account!",
+        "Size": 9999999,
+        "Checksum": "\"0xABCDEF0123456789\"",
+        "LastModified": "2023-01-01T00:00:00Z"
+      }
+    },
+    "Entity": {
+      "Id": "*****************",
+      "Type": "title_player_account",
+      "TypeString": "title_player_account"
+    }
+  }
+}
