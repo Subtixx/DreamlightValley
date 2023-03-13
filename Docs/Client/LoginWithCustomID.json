@@ -1,0 +1,26 @@
+{
+  "CreateAccount": true,
+  "CustomId": "game_ff125490-b792-4048-807f-6c08f48cd1b1_cfg",
+  "CustomTags": null,
+  "EncryptedRequest": null,
+  "InfoRequestParameters": {
+    "GetCharacterInventories": false,
+    "GetCharacterList": false,
+    "GetPlayerProfile": false,
+    "GetPlayerStatistics": false,
+    "GetTitleData": true,
+    "GetUserAccountInfo": false,
+    "GetUserData": false,
+    "GetUserInventory": false,
+    "GetUserReadOnlyData": true,
+    "GetUserVirtualCurrency": false,
+    "PlayerStatisticNames": null,
+    "ProfileConstraints": null,
+    "TitleDataKeys": null,
+    "UserDataKeys": null,
+    "UserReadOnlyDataKeys": null
+  },
+  "PlayerSecret": null,
+  "TitleId": "11111",
+  "AuthenticationContext": null
+}

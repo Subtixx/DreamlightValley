@@ -1,0 +1,120 @@
+{
+    "Environment": "Dev",
+    "LatestGameVersion": "1.1.0",
+    "VersionMandatory": "",
+    "VersionOptional": "",
+    "Maintenance": false,
+    "Override": [
+        {
+            "MatcherType": "Config",
+            "Matcher": "^Release$",
+            "Settings": {
+                "Environment": "Prod"
+            }
+        },
+        {
+            "MatcherType": "Branch",
+            "Matcher": "^develop$",
+            "Settings": {
+                "Environment": "Dev",
+                "Override": [
+                    {
+                        "MatcherType": "Config",
+                        "Matcher": "^ReleaseWithCheats$|^Release$",
+                        "Settings": {
+                            "Override": [
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=0}.*",
+                                    "Settings": {
+                                        "Environment": "Staging0"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=1}.*",
+                                    "Settings": {
+                                        "Environment": "Staging1"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=2}.*",
+                                    "Settings": {
+                                        "Environment": "Staging2"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=3}.*",
+                                    "Settings": {
+                                        "Environment": "Staging3"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "MatcherType": "Branch",
+            "Matcher": "^releases/*",
+            "Settings": {
+                "Environment": "Prod",
+                "Override": [
+                    {
+                        "MatcherType": "Config",
+                        "Matcher": "\\\\b(?:(?!^Release$)\\\\w)+\\\\b",
+                        "Settings": {
+                            "Override": [
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=0}.*",
+                                    "Settings": {
+                                        "Environment": "Staging0"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=1}.*",
+                                    "Settings": {
+                                        "Environment": "Staging1"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=2}.*",
+                                    "Settings": {
+                                        "Environment": "Staging2"
+                                    }
+                                },
+                                {
+                                    "MatcherType": "Version",
+                                    "Matcher": "*.{%4=3}.*",
+                                    "Settings": {
+                                        "Environment": "Staging3"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "MatcherType": "Branch",
+            "Matcher": "^releases/1.0$",
+            "Settings": {
+                "VersionMandatory": "666"
+            }
+        },
+        {
+            "MatcherType": "Version",
+            "Matcher": "1.1.*",
+            "Settings": {
+                "VersionMandatory": "1.2.0"
+            }
+        }
+    ]
+}

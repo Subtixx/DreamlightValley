@@ -10,12 +10,15 @@
     <ItemGroup>
       <Reference Include="BepInEx.Core">
         <HintPath>..\Lib\BepInEx.Core.dll</HintPath>
+        <Private>False</Private>
       </Reference>
       <Reference Include="BepInEx.Unity.IL2CPP">
         <HintPath>..\Lib\BepInEx.Unity.IL2CPP.dll</HintPath>
+        <Private>False</Private>
       </Reference>
       <Reference Include="PlayFabAllSDK">
         <HintPath>..\Lib\PlayFabAllSDK.dll</HintPath>
+        <Private>False</Private>
       </Reference>
     </ItemGroup>
 

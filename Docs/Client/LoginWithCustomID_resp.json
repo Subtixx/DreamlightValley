@@ -1,0 +1,51 @@
+{
+    "code": 200,
+    "status": "OK",
+    "data": {
+        "SessionTicket": "**********************************",
+        "PlayFabId": "**********************************",
+        "NewlyCreated": false,
+        "SettingsForUser": {
+            "NeedsAttribution": false,
+            "GatherDeviceInfo": true,
+            "GatherFocusInfo": true
+        },
+        "LastLoginTime": "2023-01-01T00:00:00.000Z",
+        "InfoResultPayload": {
+            "UserInventory": [],
+            "UserDataVersion": 0,
+            "UserReadOnlyData": {},
+            "UserReadOnlyDataVersion": 0,
+            "CharacterInventories": [],
+            "TitleData": {
+                "Debug": "8D4E4",
+                "DebugSettings": "{\"Environment\":\"Dev\",\"LatestGameVersion\":\"1.1.0\",\"VersionMandatory\":\"\",\"VersionOptional\":\"\",\"Maintenance\":false,\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"1.3.1\",\"Settings\":{\"VersionOptional\":\"1.4.0\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"1.0.*\",\"Settings\":{\"Maintenance\":false,\"Environment\":\"Staging3\"}},{\"MatcherType\":\"Config\",\"Matcher\":\"^Editor$\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"1.2.0\",\"Settings\":{\"Maintenance\":false}}]}},{\"MatcherType\":\"Config\",\"Matcher\":\"^Release$\",\"Settings\":{\"Environment\":\"Prod\"}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^develop$\",\"Settings\":{\"Environment\":\"Dev\",\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"^ReleaseWithCheats$|^Release$\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=0}.*\",\"Settings\":{\"Environment\":\"Staging0\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=1}.*\",\"Settings\":{\"Environment\":\"Staging1\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=2}.*\",\"Settings\":{\"Environment\":\"Staging2\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=3}.*\",\"Settings\":{\"Environment\":\"Staging3\"}}]}}]}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^releases/*\",\"Settings\":{\"Environment\":\"Prod\",\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"\\\\b(?:(?!^Release$)\\\\w)+\\\\b\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=0}.*\",\"Settings\":{\"Environment\":\"Staging0\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=1}.*\",\"Settings\":{\"Environment\":\"Staging1\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=2}.*\",\"Settings\":{\"Environment\":\"Staging2\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=3}.*\",\"Settings\":{\"Environment\":\"Staging3\"}}]}}]}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^releases/1.1$\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"1.1.5\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"^Editor$\",\"Settings\":{\"Environment\":\"Staging2\"}}]}}]}},{\"MatcherType\":\"UserId\",\"Matcher\":\"**********************************\",\"Settings\":{\"Environment\":\"Staging3\"}},{\"MatcherType\":\"Config\",\"Matcher\":\"^Editor$\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Branch\",\"Matcher\":\"^releases/1.0$\",\"Settings\":{\"VersionMandatory\":\"75\"}}]}}]}",
+                "Dev": "24C55",
+                "NewSettings": "{\"Environment\":\"Dev\",\"LatestGameVersion\":\"1.1.0\",\"VersionMandatory\":\"\",\"VersionOptional\":\"\",\"Maintenance\":false,\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"^Release$\",\"Settings\":{\"Environment\":\"Prod\"}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^develop$\",\"Settings\":{\"Environment\":\"Dev\",\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"^ReleaseWithCheats$|^Release$\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=0}.*\",\"Settings\":{\"Environment\":\"Staging0\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=1}.*\",\"Settings\":{\"Environment\":\"Staging1\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=2}.*\",\"Settings\":{\"Environment\":\"Staging2\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=3}.*\",\"Settings\":{\"Environment\":\"Staging3\"}}]}}]}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^releases/*\",\"Settings\":{\"Environment\":\"Prod\",\"Override\":[{\"MatcherType\":\"Config\",\"Matcher\":\"\\\\b(?:(?!^Release$)\\\\w)+\\\\b\",\"Settings\":{\"Override\":[{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=0}.*\",\"Settings\":{\"Environment\":\"Staging0\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=1}.*\",\"Settings\":{\"Environment\":\"Staging1\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=2}.*\",\"Settings\":{\"Environment\":\"Staging2\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"*.{%4=3}.*\",\"Settings\":{\"Environment\":\"Staging3\"}}]}}]}},{\"MatcherType\":\"Branch\",\"Matcher\":\"^releases/1.0$\",\"Settings\":{\"VersionMandatory\":\"666\"}},{\"MatcherType\":\"Version\",\"Matcher\":\"1.1.*\",\"Settings\":{\"VersionMandatory\":\"1.2.0\"}}]}",
+                "Prod": "997EB",
+                "Settings": "{\"Environment\":\"Dev\",\"LatestGameVersion\":\"1.1.0\",\"VersionMandatory\":\"\",\"VersionOptional\":\"\",\"Maintenance\":false,\"Override\":[{\"Matcher\":\"Development\",\"Settings\":{\"Override\":[{\"Matcher\":\"5\",\"Settings\":{\"Environment\":\"Staging\"}}]}},{\"Matcher\":\"Release\",\"Settings\":{\"Environment\":\"Prod\",\"Override\":[{\"Matcher\":\"1.0.*\",\"Settings\":{\"Environment\":\"Prod\",\"VersionMandatory\":\"1.2.0\"}},{\"Matcher\":\"1.0.666\",\"Settings\":{\"Environment\":\"Staging\",\"UpdateTitle\":\"1.0.666 override test\"}},{\"Matcher\":\"Switch\",\"Settings\":{\"Override\":[{\"Matcher\":\"1234\",\"Settings\":{\"Environment\":\"Testing\",\"UpdateTitle\":\"Switch 1234 override test, title updated !\"}}]}},{\"Matcher\":\"Windows\"},{\"Matcher\":\"Android\"},{\"Matcher\":\"Ios\"}]}}]}",
+                "Staging": "BA3AE",
+                "Staging0": "BA3AE",
+                "Staging1": "1388A",
+                "Staging2": "887FB",
+                "Staging3": "FF792",
+                "Testing": "F4412"
+            }
+        },
+        "EntityToken": {
+            // Base 64 encoded string (Docs/EntityToken.md)
+            "EntityToken": "",
+            "TokenExpiration": "2023-01-01T00:00:00Z",
+            "Entity": {
+                // 16x Hexadecimal string
+                "Id": "",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+            }
+        },
+        "TreatmentAssignment": {
+            "Variants": [],
+            "Variables": []
+        }
+    }
+}

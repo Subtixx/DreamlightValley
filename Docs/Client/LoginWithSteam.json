@@ -1,0 +1,46 @@
+{
+  "CreateAccount": true,
+  "CustomTags": null,
+  "EncryptedRequest": null,
+  "InfoRequestParameters": {
+    "GetCharacterInventories": true,
+    "GetCharacterList": true,
+    "GetPlayerProfile": true,
+    "GetPlayerStatistics": true,
+    "GetTitleData": true,
+    "GetUserAccountInfo": true,
+    "GetUserData": true,
+    "GetUserInventory": true,
+    "GetUserReadOnlyData": true,
+    "GetUserVirtualCurrency": true,
+    "PlayerStatisticNames": [],
+    "ProfileConstraints": {
+      "ShowAvatarUrl": true,
+      "ShowBannedUntil": false,
+      "ShowCampaignAttributions": false,
+      "ShowContactEmailAddresses": true,
+      "ShowCreated": true,
+      "ShowDisplayName": true,
+      "ShowExperimentVariants": false,
+      "ShowLastLogin": true,
+      "ShowLinkedAccounts": true,
+      "ShowLocations": true,
+      "ShowMemberships": false,
+      "ShowOrigination": false,
+      "ShowPushNotificationRegistrations": false,
+      "ShowStatistics": true,
+      "ShowTags": true,
+      "ShowTotalValueToDateInUsd": false,
+      "ShowValuesToDate": false
+    },
+    "TitleDataKeys": [
+      "TitleConfig"
+    ],
+    "UserDataKeys": [],
+    "UserReadOnlyDataKeys": []
+  },
+  "PlayerSecret": null,
+  "SteamTicket": "",
+  "TitleId": "997EB",
+  "AuthenticationContext": null
+}

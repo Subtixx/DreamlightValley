@@ -1,0 +1,67 @@
+{
+    "Environment": "Dev",
+    "LatestGameVersion": "1.1.0",
+    "VersionMandatory": "",
+    "VersionOptional": "",
+    "Maintenance": false,
+    "Override": [
+        {
+            "Matcher": "Development",
+            "Settings": {
+                "Override": [
+                    {
+                        "Matcher": "5",
+                        "Settings": {
+                            "Environment": "Staging"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Matcher": "Release",
+            "Settings": {
+                "Environment": "Prod",
+                "Override": [
+                    {
+                        "Matcher": "1.0.*",
+                        "Settings": {
+                            "Environment": "Prod",
+                            "VersionMandatory": "1.2.0"
+                        }
+                    },
+                    {
+                        "Matcher": "1.0.666",
+                        "Settings": {
+                            "Environment": "Staging",
+                            "UpdateTitle": "1.0.666 override test"
+                        }
+                    },
+                    {
+                        "Matcher": "Switch",
+                        "Settings": {
+                            "Override": [
+                                {
+                                    "Matcher": "1234",
+                                    "Settings": {
+                                        "Environment": "Testing",
+                                        "UpdateTitle": "Switch 1234 override test, title updated !"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Matcher": "Windows"
+                    },
+                    {
+                        "Matcher": "Android"
+                    },
+                    {
+                        "Matcher": "Ios"
+                    }
+                ]
+            }
+        }
+    ]
+}

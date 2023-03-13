@@ -1,0 +1,123 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "SessionTicket": "**********************************",
+    "PlayFabId": "**********************************",
+    "NewlyCreated": false,
+    "SettingsForUser": {
+      "NeedsAttribution": false,
+      "GatherDeviceInfo": true,
+      "GatherFocusInfo": true
+    },
+    "LastLoginTime": "2023-01-01T00:00:00.000Z",
+    "InfoResultPayload": {
+      "AccountInfo": {
+        "PlayFabId": "**********************************",
+        "Created": "2023-01-01T00:00:00.000Z",
+        "TitleInfo": {
+          "Origination": "Steam",
+          "Created": "2023-01-01T00:00:00.000Z",
+          "LastLogin": "2023-01-01T00:00:00.000Z",
+          "FirstLogin": "2023-01-01T00:00:00.000Z",
+          "isBanned": false,
+          "TitlePlayerAccount": {
+            "Id": "**********************************",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          }
+        },
+        "PrivateInfo": {},
+        "SteamInfo": {
+          "SteamId": "*****************",
+          "SteamName": "********",
+          "SteamCountry": "US",
+          "SteamCurrency": "USD"
+        },
+        "OpenIdInfo": [
+          {
+            "ConnectionId": "GameloftID",
+            "Issuer": "https://id.gameloft.com/",
+            "Subject": "08c371cf-6dc2-4ca7-9d33-f1852e6a40dd"
+          }
+        ]
+      },
+      "UserInventory": [],
+      "UserVirtualCurrency": {},
+      "UserVirtualCurrencyRechargeTimes": {},
+      "UserData": {},
+      "UserDataVersion": 1,
+      "UserReadOnlyData": {
+        "CurrentGameSessionInfo": {
+          "Value": "{\"DeviceName\":\"PC-HOSTNAME\"}",
+          "LastUpdated": "2023-01-01T00:00:00.000Z",
+          "Permission": "Private"
+        },
+        "CurrentSessionToken": {
+          // Base 64 encoded string (Docs/EntityToken.md)
+          "Value": "",
+          "LastUpdated": "2023-01-01T00:00:00Z",
+          "Permission": "Private"
+        }
+      },
+      "UserReadOnlyDataVersion": 23,
+      "CharacterList": [],
+      "CharacterInventories": [],
+      "TitleData": {
+        "TitleConfig": "{\"PortalUrl\":\"https://app-04d34531-4e4a-4e53-8443-3c24bbbeecce.jidoka.gameloft.com\",\"DeltaDNA\":\"*********************\",\"Portals\":[{\"UserUrl\":\"\",\"TesterUrl\":\"\"},{\"UserUrl\":\"https://app-ea7721ef-f504-4e4b-a18e-5904b080da50.jidoka.gameloft.com\",\"TesterUrl\":\"https://app-1b5d15a4-a92d-4ec3-b13e-b267649f192c.jidoka.gameloft.com\"},{\"UserUrl\":\"https://app-b098d6bf-6019-4b33-9fb6-fa3153a7efdd.jidoka.gameloft.com\",\"TesterUrl\":\"https://app-298e152b-a8bb-401c-acfb-bbd2470c575b.jidoka.gameloft.com\"},{\"UserUrl\":\"https://app-29cf2df4-f0b3-4d2b-893d-8058c437196e.jidoka.gameloft.com\",\"TesterUrl\":\"https://app-8a3ddcf8-7dd3-410f-bc85-1f15549944f4.jidoka.gameloft.com\"}],\"MinUser\":{\"PlayFabId\":\"******************\",\"EntityId\":\"*****************\",\"EntityType\":\"title_player_account\"},\"MaxUser\":{\"PlayFabId\":\"********************\",\"EntityId\":\"**************************\",\"EntityType\":\"title_player_account\"},\"NewsfeedUsers\":[{\"PlayFabId\":\"********************\",\"EntityId\":\"*******************\",\"EntityType\":\"title_player_account\"}]}"
+      },
+      "PlayerStatistics": [],
+      "PlayerProfile": {
+        "PublisherId": "****************",
+        "TitleId": "997EB",
+        "PlayerId": "***************",
+        "Created": "2023-01-01T00:00:00Z",
+        "LastLogin": "2023-01-01T00:00:00Z",
+        "Locations": [
+          {
+            "ContinentCode": "US",
+            "CountryCode": "US",
+            "City": "San Francisco",
+            "Latitude": 37.774,
+            "Longitude": -122.419
+          }
+        ],
+        "Tags": [],
+        "LinkedAccounts": [
+          {
+            "Platform": "OpenIdConnect",
+            "PlatformUserId": "https://id.gameloft.com/|14f37a25-d002-4771-95d5-d297be7a1e44"
+          },
+          {
+            "Platform": "Steam",
+            "PlatformUserId": "*****************",
+            "Username": "*******"
+          }
+        ],
+        "ContactEmailAddresses": [],
+        "Statistics": [
+          {
+            "Name": "LatestGameVersion",
+            "Version": 0,
+            "Value": 100300
+          }
+        ]
+      }
+    },
+    "EntityToken": {
+      // Base 64 encoded string (Docs/EntityToken.md)
+      "EntityToken": "",
+      "TokenExpiration": "2023-01-01T00:00:00Z",
+      "Entity": {
+        // 16x Hexadecimal string
+        "Id": "",
+        "Type": "title_player_account",
+        "TypeString": "title_player_account"
+      }
+    },
+    "TreatmentAssignment": {
+      "Variants": [],
+      "Variables": []
+    }
+  }
+}

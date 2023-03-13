@@ -243,7 +243,7 @@ namespace DLV_Api
 
             var uri = new Uri("https://" + _titleId + "." + _originalUrl + req.RawUrl);
             // Check url starts with Client/
-            if (req.Url?.AbsolutePath.StartsWith("/Client/") ?? true)
+            if ((req.Url?.AbsolutePath.StartsWith("/Client/") ?? true) && (req.Url?.AbsolutePath.Contains("Login") ?? true))
             {
                 uri = new Uri("https://www." + _originalUrl + req.RawUrl);
             }
