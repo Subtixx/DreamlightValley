@@ -19,6 +19,10 @@
     <br />
     This mod requires <a href="https://docs.bepinex.dev/master/articles/user_guide/installation/index.html">BepInEx</a>
     <br />
+    <small>PS: If Gameloft or Disney reads this, don't expect real data in here..
+    <br />
+    I replaced EVERYTHING with random GUIDs and stars.</small>
+    <br />
     <br />
     <a href="https://github.com/Subtixx/DreamlightValley/issues">Report Bug</a>
     ·

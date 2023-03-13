@@ -6,6 +6,9 @@ using Serilog;
 
 namespace DLV_Api.Overrides;
 
+/// <summary>
+/// Currently we're overriding the ClientLoginWithSteam endpoint to add the founders pack to the user data.
+/// </summary>
 // ReSharper disable once UnusedType.Global
 public static class ClientLogin
 {
@@ -33,6 +36,7 @@ public static class ClientLogin
             {
                 LastUpdated = new DateTime(),
                 Permission = "private",
+                // Yes.. There is a typo here. They misspelled awarded 🤦
                 Value =
                     "{\"DataVersion\":3,\"AwarwedPacksPerStore\":{\"Steam\":{\"PackPrettyName\":\"FoundersPackUltimate_Steam_OnlineKey\",\"PackInstanceId\":\"" +
                     Guid.NewGuid() + "\"}}}"
