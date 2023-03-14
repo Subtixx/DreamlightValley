@@ -22,7 +22,11 @@ public class DlvPacketAnalyzer : BasePlugin
                                Path.Join(SpecialDirectories.MyDocuments, "DLV");
 
         Serilog.Log.Logger = new LoggerConfiguration()
+#if DEBUG
             .MinimumLevel.Verbose()
+#else
+            .MinimumLevel.Warning()
+#endif
             .WriteTo.Console()
             .WriteTo.File(Path.Join(assemblyLocation, "DLV.log"))
             .CreateLogger();

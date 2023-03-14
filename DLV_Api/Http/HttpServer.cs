@@ -173,17 +173,16 @@ namespace DLV_Api.Http
                 ctx.Response.StatusCode = (int)responseFromServer.StatusCode;
                 ctx.Response.ContentType = responseFromServer.ContentType;
                 ctx.Response.ContentEncoding = Encoding.UTF8;
-                ctx.Response.ContentLength64 = responseFromServer.Body.Length;
-                await ctx.Response.OutputStream.WriteAsync(Encoding.UTF8.GetBytes(responseFromServer.Body));
+                var bytesWrite = Encoding.UTF8.GetBytes(responseFromServer.Body);
+                ctx.Response.ContentLength64 = bytesWrite.Length;
+                await ctx.Response.OutputStream.WriteAsync(bytesWrite);
 
-                Log.Information("Sent response to {Client}", ctx.Request.RemoteEndPoint);
+                Log.Debug("Sent response to {Client}", ctx.Request.RemoteEndPoint);
+                ctx.Response.OutputStream.Close();
             }
             catch (Exception e)
             {
                 Log.Fatal(e, "Error while handling incoming connections");
-            }
-            finally
-            {
                 ctx.Response.OutputStream.Close();
             }
         }
