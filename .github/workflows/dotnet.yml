@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.configuration }}
-          path: DLV_PacketAnalyzerMod/bin/${{ matrix.configuration }}/net6.0
+          path: DLV/bin/${{ matrix.configuration }}/net6.0
