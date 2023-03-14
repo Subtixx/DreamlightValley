@@ -2,28 +2,29 @@
 using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using DLV_Api;
+using DLV_Api.Http;
 using Microsoft.VisualBasic.FileIO;
 using PlayFab;
-using DLV_Api;
 using Serilog;
 
-namespace DLV_PacketAnalyzerMod;
+namespace DLV;
 
-[BepInPlugin("org.bepinex.plugins.DLV_PacketAnalyzerMod", "Dreamlight Valley Packet Analyzer", "1.0.0.0")]
+[BepInPlugin("org.bepinex.plugins.DLV", "Dreamlight Valley Packet Analyzer", "1.0.0.0")]
 // ReSharper disable once UnusedType.Global
 public class DlvPacketAnalyzer : BasePlugin
 {
     private HttpServer? _httpServer;
-
+    
     public override void Load()
     {
         var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
-                               Path.Join(SpecialDirectories.MyDocuments, "DLV_PacketAnalyzerMod");
+                               Path.Join(SpecialDirectories.MyDocuments, "DLV");
 
         Serilog.Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .WriteTo.Console()
-            .WriteTo.File(Path.Join(assemblyLocation, "DLV_PacketAnalyzerMod.log"))
+            .WriteTo.File(Path.Join(assemblyLocation, "DLV.log"))
             .CreateLogger();
 
         var titleId = PlayFabSettings.staticSettings.TitleId;

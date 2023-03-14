@@ -1,4 +1,5 @@
 using System.Net;
+using DLV_Api.Http;
 using DLV_Api.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,24 +11,24 @@ namespace DLV_Api.Overrides;
 /// Currently we're overriding the ClientLoginWithSteam endpoint to add the founders pack to the user data.
 /// </summary>
 // ReSharper disable once UnusedType.Global
-public static class ClientLogin
+public class ClientLogin : ApiRequest
 {
-    [Endpoint(EndpointAttribute.HttpMethod.Post, "/Client/LoginWithSteam")]
-    // ReSharper disable once UnusedMember.Global
-    public static string ClientLoginWithSteam(HttpListenerRequest request, string requestBody, string responseBody)
+    public override string GetPath() => "/Client/LoginWithSteam";
+
+    public override string? AfterRequest(HttpResponse response)
     {
-        var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(responseBody);
+        var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(response.Body);
         if (apiResponse?.Data == null)
         {
             Log.Error("ClientLoginWithSteam: apiResponse is null");
-            return responseBody;
+            return null;
         }
 
         var clientLoginWithSteam = apiResponse.Data.ToObject<ClientLoginWithSteam>();
         if (clientLoginWithSteam?.InfoResultPayload == null)
         {
             Log.Error("ClientLoginWithSteam: clientLoginWithSteam is null");
-            return responseBody;
+            return null;
         }
 
         clientLoginWithSteam.InfoResultPayload.UserData.Clear();

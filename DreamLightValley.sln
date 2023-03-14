@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLV_Api", "DLV_Api\DLV_Api.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLV_Api.Tests", "DLV_Api.Tests\DLV_Api.Tests.csproj", "{09F4E4A4-F115-40DA-A9E4-8C74FE3F3333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLV_PacketAnalyzerMod", "DLV_PacketAnalyzerMod\DLV_PacketAnalyzerMod.csproj", "{9032583F-80BD-4BCF-A1E1-50617C73DF6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DLV", "DLV\DLV.csproj", "{9032583F-80BD-4BCF-A1E1-50617C73DF6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
