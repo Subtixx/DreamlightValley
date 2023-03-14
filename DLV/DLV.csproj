@@ -57,9 +57,4 @@
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
         <PackageReference Include="UniverseLib.IL2CPP.Unhollower" Version="1.5.1" />
     </ItemGroup>
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <!--<Exec Command="WINEPREFIX=~/.wine/prefix WINEARCH=win32 wine $(SolutionDir)Lib/ILRepack.exe /target:library /lib:$(SolutionDir)Lib /lib:$(SolutionDir)Lib/net6 /internalize /out:$(TargetDir)DLV.dll $(TargetDir)DLV.dll" />-->
-        <Exec Command="cp -f $(TargetDir)DLV.dll &quot;/mnt/Games/SteamLibrary/steamapps/common/Disney Dreamlight Valley/BepInEx/plugins/DLV/&quot;" />
-    </Target>
 </Project>
